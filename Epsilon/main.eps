@@ -1,0 +1,147 @@
+/*
+TODO:
+* add file handling
+* add [T] as alias for Array<T>
+* add Optional<T> type
+    * unwrap method on optional
+    * null keyword
+    * is_null method
+* add T? as alias for Optional<T>
+* add <Array<T>>.clear<W64> function (which works when T is an integer, or a nullable type)
+* add <Array<T>>.unique function
+Long term:
+* make all CodeBlocks contiain their own Scopes
+*/
+
+/*
+LetterResponse enum values:
+0 = GRAY
+1 = ORANGE
+2 = GREEN
+*/
+
+Str#find_best_word<[Str]:words> {
+    [Z]:frequencies = [Z] [];
+    [frequencies].clear[26];
+    W:i = 0;
+    W:j = 0;
+    while (i < [words].length) {
+        j = 0;
+        Str:word = words[i];
+        while (j < [word].length) {
+            Byte:idx = word[j] - 'a';
+            frequencies[idx] = frequencies[idx] + 1;
+        };
+        i = i + 1;
+    };
+    W:bestScore = 0;
+    Str?:best = null;
+    i = 0;
+    while (i < [words].length) {
+        Str:word = words[i];
+        Str:chars = [word].unique;
+        W:score = 0;
+        j = 0;
+        while (j < [chars].length) {
+            score = score + frequencies[chars[j]-'a'];
+            j = j + 1;
+        };
+        if (score > bestScore) {
+            bestScore = score;
+            best = word;
+        };
+        i = i + 1;
+    };
+    return [best].unwrap;
+}
+
+[W]#get_wordle_response<Str:guess><Str:target> {
+    [W]:response = [W] [];
+    W:i = 0;
+    while (i < [guess].length) {
+        Byte gchar = guess[i];
+        if (gchar == target[i]) {
+            [response].append[2];
+        } elif ([guess].index_of[gchar] != -1) {
+            [response].append[1];
+        } else {
+            [response].append[0];
+        };
+        i = i + 1;
+    };
+    return response;
+}
+
+[Str]#filter_words_given_response<[Str]:words><[W]:response><Str:guess> {
+    [Str]:result = [Str] [];
+    W:i = 0;
+    while (i < [words].length) {
+        Str:word = words[i];
+        i = i + 1;
+        W:j = 0;
+        Bool:valid = true;
+        while (j < [word].length) {
+            Byte:gchar = guess[j];
+            Byte:wchar = word[j];
+            W:lresponse = response[j];
+            uninit Bool:validc;
+            if (lresponse == 2) {
+                uninit validc = wchar == gchar;
+            } elif (lresponse == 1) {
+                uninit validc = wchar != gchar && ([word].index_of[gchar] != -1);
+            } else {
+                uninit validc = [word].index_of[gchar] == -1;
+            };
+            if (!validc) {
+                valid = false;
+                break;
+            };
+            j = j + 1;
+        };
+        if (!valid) {break;};
+        [result].append[word]
+    };
+    return result;
+}
+
+Bool#do_wordle<[Str]:words><Str:target> {
+    W:i = 0;
+    while (i < 6) {
+        Str:guess = find_best_word[words];
+        if ([guess] equals [target]) {
+            return true;
+        };
+        [W]:response = get_wordle_response[guess][target];
+        words = filter_words_given_response[words][response][guess];
+        i = i + 1;
+    };
+    return false;
+}
+
+Z#main {
+    File:file = open_file["words.txt", FILE_READ_MODE];
+    if (![file].file_open) {
+        abort["Failed to open file"];
+    };
+    [Str]?:nullableWords = [file].read_lines;
+    if ([nullableWords].is_null) {
+        abort["Failed to read file content"];
+    };
+    [Str]:words = [nullableWords].unwrap;
+
+    W:succeeded = 0;
+    W:failed = 0;
+
+    W:i = 0;
+    while (i < [words].length) {
+        Bool:success = do_wordle[words][words[i]];
+        if (success) {
+            succeeded = succeeded + 1;
+        } else {
+            failed = failed + 1;
+        };
+        i++;
+    };
+    
+    return 0;
+}

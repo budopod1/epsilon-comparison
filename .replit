@@ -1,0 +1,4 @@
+run = "./compile.bash;./benchmark.bash"
+
+[nix]
+channel = "stable-22_11"
