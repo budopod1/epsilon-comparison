@@ -11,7 +11,7 @@ time mono Csharp/Main.exe
 echo
 
 echo "Benchmarking Epsilon..."
-echo "TODO: implement"
+time Epsilon/main
 echo
 
 echo "Benchmarking Python..."
