@@ -4,3 +4,5 @@ Epsilon/main
 Rust/main
 .replit
 replit.nix
+Epsilon/Compiler
+.local
