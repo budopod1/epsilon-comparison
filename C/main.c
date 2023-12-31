@@ -140,6 +140,7 @@ int doWordle(struct WordList *list, char *target) {
         }
         enum LetterResponse *response = getWordleResponse(guess, target);
         struct WordList *newList = filterWordsGivenResponse(list, response, guess);
+        free(response);
         if (i > 0) freeList(list);
         list = newList;
     }
@@ -160,7 +161,10 @@ int main() {
         char *word = NULL;
         size_t len = 0;
         ssize_t read = getline(&word, &len, file);
-        if (read == -1) break;
+        if (read == -1) {
+            free(word);
+            break;
+        }
         word[WORDLE_LEN] = '\0'; // remove possible trailing newline
         wordCount++;
         if (wordCount > wordCapacity) {
