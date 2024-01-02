@@ -12,8 +12,7 @@ Str#find_best_word<[Str]:words> {
         W:j = 0;
         Str:word = words[i];
         while (j < [word].length) {
-            Byte:idx = word[j++] - 'a';
-            frequencies[idx] = frequencies[idx] + 1;
+            frequencies[word[j++] - 'a']++;
         };
         i++;
     };
