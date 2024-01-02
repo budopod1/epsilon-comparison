@@ -2,4 +2,5 @@
 set -e
 cd "${0%/*}"
 
-echo "TODO: implement"
+mono Epsilon/Compiler/Epsilon.exe compile Epsilon/main.epsl Epsilon/main
+./Epsilon/main

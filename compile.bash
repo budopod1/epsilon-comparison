@@ -13,7 +13,8 @@ echo "Compiled C#"
 echo
 
 echo "Compiling Epsilon..."
-echo "TODO: implement"
+mono Epsilon/Compiler/Epsilon.exe compile Epsilon/main.epsl Epsilon/main
+echo "Compiled Epsilon"
 echo
 
 echo "Not compiling Python"
