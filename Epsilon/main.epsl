@@ -26,7 +26,7 @@ Str#find_best_word<[Str]:words> {
         W:score = 0;
         W:j = 0;
         while (j < [chars].length) {
-            score = score + frequencies[chars[j++]-'a'];
+            score += frequencies[chars[j++]-'a'];
         };
         if (score > bestScore) {
             bestScore = score;
