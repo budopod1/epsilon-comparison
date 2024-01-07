@@ -11,40 +11,31 @@ W#LetterResponse_GREEN {return 2;}
 
 Str#find_best_word<[Str]:words> {
     [W]:frequencies = [[W] []].blank_from_type[26];
-    W:i = 0;
-    while (i < [words].length) {
-        W:j = 0;
-        Str:word = words[i];
-        while (j < [word].length) {
-            frequencies[word[j++] - 'a']++;
+    for (Str:word in words) {
+        for (Byte:chr in word) {
+            frequencies[chr - 'a']++;
         };
-        i++;
     };
     W:bestScore = 0;
     Str?:best = null;
-    i = 0;
-    while (i < [words].length) {
-        Str:word2 = words[i];
-        Str:chars = [word2].clone;
+    for (Str:word in words) {
+        Str:chars = [word].clone;
         [chars].unique;
         W:score = 0;
-        W:j = 0;
-        while (j < [chars].length) {
-            score += frequencies[chars[j++]-'a'];
+        for (Byte:chr in chars) {
+            score += frequencies[chr-'a'];
         };
         if (score > bestScore) {
             bestScore = score;
-            best = word2;
+            best = word;
         };
-        i++;
     };
     return [best].unwrap;
 }
 
 [W]#get_wordle_response<Str:guess><Str:target> {
     [W]:response = [W] [];
-    W:i = 0;
-    while (i < [guess].length) {
+    for (W:i enumerating guess) {
         Byte:gchar = guess[i];
         if (gchar == target[i]) {
             [response].append[LetterResponse_GREEN];
@@ -53,7 +44,6 @@ Str#find_best_word<[Str]:words> {
         } else {
             [response].append[LetterResponse_GRAY];
         };
-        i++;
     };
     return response;
 }
@@ -61,12 +51,9 @@ Str#find_best_word<[Str]:words> {
 [Str]#filter_words_given_response<[Str]:words><[W]:response><Str:guess> {
     [Str]:result = [Str] [];
     W:i = 0;
-    while (i < [words].length) {
-        Str:word = words[i];
-        i++;
-        W:j = 0;
+    for (Str:word in words) {
         Bool:valid = true;
-        while (j < [word].length) {
+        for (W:j enumerating word) {
             Byte:gchar = guess[j];
             Byte:wchar = word[j];
             W:lresponse = response[j];
@@ -74,11 +61,10 @@ Str#find_best_word<[Str]:words> {
             if (lresponse == LetterResponse_GREEN) {
                 uninit validc = wchar == gchar;
             } elif (lresponse == LetterResponse_ORANGE) {
-                uninit validc = wchar != gchar && ([word].index_of[gchar] != -1);
+                uninit validc = wchar!=gchar && ([word].index_of[gchar]!=-1);
             } else { // LetterResponse_GRAY
                 uninit validc = [word].index_of[gchar] == -1;
             };
-            j++;
             if (!validc) {
                 valid = false;
                 break;
@@ -92,15 +78,13 @@ Str#find_best_word<[Str]:words> {
 }
 
 Bool#do_wordle<[Str]:words><Str:target> {
-    W:i = 0;
-    while (i < 6) {
+    for (W:i to 6) {
         Str:guess = find_best_word[words];
         if ([guess] equals [target]) {
             return true;
         };
         [W]:response = get_wordle_response[guess][target];
         words = filter_words_given_response[words][response][guess];
-        i++;
     };
     return false;
 }
@@ -119,15 +103,13 @@ Z#main {
     W:succeeded = 0;
     W:failed = 0;
 
-    W:i = 0;
-    while (i < [words].length) {
-        Bool:success = do_wordle[words][words[i]];
+    for (Str:word in words) {
+        Bool:success = do_wordle[words][word];
         if (success) {
             succeeded++;
         } else {
             failed++;
         };
-        i++;
     };
 
     println[["Succeeded: "] + [[succeeded].stringify]];
