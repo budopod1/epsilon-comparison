@@ -5,6 +5,10 @@ LetterResponse enum values:
 2 = GREEN
 */
 
+W#LetterResponse_GRAY {return 0;}
+W#LetterResponse_ORANGE {return 1;}
+W#LetterResponse_GREEN {return 2;}
+
 Str#find_best_word<[Str]:words> {
     [W]:frequencies = [[W] []].blank_from_type[26];
     W:i = 0;
@@ -43,11 +47,11 @@ Str#find_best_word<[Str]:words> {
     while (i < [guess].length) {
         Byte:gchar = guess[i];
         if (gchar == target[i]) {
-            [response].append[2];
+            [response].append[LetterResponse_GREEN];
         } elif ([target].index_of[gchar] != -1) {
-            [response].append[1];
+            [response].append[LetterResponse_ORANGE];
         } else {
-            [response].append[0];
+            [response].append[LetterResponse_GRAY];
         };
         i++;
     };
@@ -67,11 +71,11 @@ Str#find_best_word<[Str]:words> {
             Byte:wchar = word[j];
             W:lresponse = response[j];
             uninit Bool:validc;
-            if (lresponse == 2) {
+            if (lresponse == LetterResponse_GREEN) {
                 uninit validc = wchar == gchar;
-            } elif (lresponse == 1) {
+            } elif (lresponse == LetterResponse_ORANGE) {
                 uninit validc = wchar != gchar && ([word].index_of[gchar] != -1);
-            } else {
+            } else { // LetterResponse_GRAY
                 uninit validc = [word].index_of[gchar] == -1;
             };
             j++;
