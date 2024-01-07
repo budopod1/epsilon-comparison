@@ -53,7 +53,9 @@ char *findBestWord(struct WordList *list) {
 }
 
 enum LetterResponse *getWordleResponse(char *guess, char *target) {
-    enum LetterResponse *response = malloc(WORDLE_LEN*sizeof(enum LetterResponse));
+    enum LetterResponse *response = malloc(
+        WORDLE_LEN*sizeof(enum LetterResponse)
+    );
     for (int i = 0; i < WORDLE_LEN; i++) {
         char gchar = guess[i];
         char tchar = target[i];
@@ -139,7 +141,9 @@ int doWordle(struct WordList *list, char *target) {
             return 1;
         }
         enum LetterResponse *response = getWordleResponse(guess, target);
-        struct WordList *newList = filterWordsGivenResponse(list, response, guess);
+        struct WordList *newList = filterWordsGivenResponse(
+            list, response, guess
+        );
         free(response);
         if (i > 0) freeList(list);
         list = newList;

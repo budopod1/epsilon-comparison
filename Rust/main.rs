@@ -49,12 +49,16 @@ fn get_wordle_response(guess: &str, target: &str) -> Vec<LetterResponse> {
 fn filter_words_given_response<'a, 'b>(words: &Vec<&'a str>, response: Vec<LetterResponse>, guess: &'b str) -> Vec<&'a str> {
     words.iter().filter(|word| {
         response.iter().enumerate().all(|(i, lresponse)| match lresponse {
-            LetterResponse::GREEN => guess.chars().nth(i) == word.chars().nth(i),
+            LetterResponse::GREEN => (
+                guess.chars().nth(i) == word.chars().nth(i)
+            ),
             LetterResponse::ORANGE => {
                 let gchar = guess.chars().nth(i);
                 gchar != word.chars().nth(i) && word.contains(gchar.unwrap())
             }
-            LetterResponse::GRAY => !word.contains(guess.chars().nth(i).unwrap()),
+            LetterResponse::GRAY => (
+                !word.contains(guess.chars().nth(i).unwrap())
+            ),
         })
     }).map(|w| *w).collect()
 }
