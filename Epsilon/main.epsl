@@ -57,13 +57,13 @@ Str#find_best_word<[Str]:words> {
             Byte:gchar = guess[j];
             Byte:wchar = word[j];
             W:lresponse = response[j];
-            uninit Bool:validc;
+            Bool:validc;
             if (lresponse == LetterResponse_GREEN) {
-                uninit validc = wchar == gchar;
+                validc = wchar == gchar;
             } elif (lresponse == LetterResponse_ORANGE) {
-                uninit validc = wchar!=gchar && ([word].index_of[gchar]!=-1);
+                validc = wchar!=gchar && ([word].index_of[gchar]!=-1);
             } else { // LetterResponse_GRAY
-                uninit validc = [word].index_of[gchar] == -1;
+                validc = [word].index_of[gchar] == -1;
             };
             if (!validc) {
                 valid = false;
