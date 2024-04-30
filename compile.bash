@@ -3,7 +3,7 @@ set -e
 cd "${0%/*}"
 
 echo "Compiling C..."
-clang -O2 C/main.c -o C/main
+clang -O3 C/main.c -o C/main
 echo "Compiled C"
 echo
 
@@ -13,7 +13,7 @@ echo "Compiled C#"
 echo
 
 echo "Compiling Epsilon..."
-mono Epsilon/Compiler/Epsilon.exe compile Epsilon/main.epsl Epsilon/main
+mono Epsilon/Compiler/Epsilon.exe compile Epsilon/entry.epsl
 echo "Compiled Epsilon"
 echo
 
